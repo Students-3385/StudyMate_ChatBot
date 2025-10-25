@@ -1,0 +1,214 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>StudyMate - Time Management Assistant</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+      font-family: 'Poppins', sans-serif;
+    }
+
+    body {
+      background: #f6f8fc;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      color: #333;
+    }
+
+    .chat-wrapper {
+      width: 100%;
+      max-width: 460px;
+      background: #fff;
+      border-radius: 18px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: fadeIn 0.5s ease-in-out;
+    }
+
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .chat-header {
+      background: #1e90ff;
+      color: white;
+      padding: 16px;
+      text-align: center;
+      font-size: 1.3rem;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    .chat-body {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      background-color: #f8faff;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+    }
+
+    .message {
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 80%;
+      word-wrap: break-word;
+      animation: fadeUp 0.3s ease-in-out;
+    }
+
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .user-msg {
+      align-self: flex-end;
+      background-color: #d9ebff;
+    }
+
+    .bot-msg {
+      align-self: flex-start;
+      background-color: #f0f0f0;
+    }
+
+    .chat-footer {
+      display: flex;
+      padding: 12px;
+      background: #fff;
+      border-top: 1px solid #ddd;
+    }
+
+    .chat-footer input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
+      font-size: 1rem;
+      outline: none;
+      transition: 0.3s;
+    }
+
+    .chat-footer input:focus {
+      border-color: #1e90ff;
+      box-shadow: 0 0 5px rgba(30,144,255,0.3);
+    }
+
+    .chat-footer button {
+      background-color: #1e90ff;
+      border: none;
+      color: white;
+      margin-left: 8px;
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 500;
+      cursor: pointer;
+      transition: 0.3s;
+    }
+
+    .chat-footer button:hover {
+      background-color: #0b73d9;
+      transform: scale(1.05);
+    }
+
+    /* Scrollbar */
+    .chat-body::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .chat-body::-webkit-scrollbar-thumb {
+      background-color: #c5d3e0;
+      border-radius: 4px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-wrapper">
+    <div class="chat-header">📘 StudyMate - Time Management Assistant</div>
+
+    <div class="chat-body" id="chat-body">
+      <div class="bot-msg message">Hello! 👋 I’m StudyMate. I can help you manage your study time effectively. What would you like help with today?</div>
+    </div>
+
+    <div class="chat-footer">
+      <input type="text" id="userInput" placeholder="Type your message..." />
+      <button id="sendBtn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    const chatBody = document.getElementById("chat-body");
+    const userInput = document.getElementById("userInput");
+    const sendBtn = document.getElementById("sendBtn");
+
+    // Scroll to latest message
+    function scrollToBottom() {
+      chatBody.scrollTop = chatBody.scrollHeight;
+    }
+
+    // Add message to chat
+    function addMessage(text, type) {
+      const msg = document.createElement("div");
+      msg.classList.add("message", type);
+      msg.textContent = text;
+      chatBody.appendChild(msg);
+      scrollToBottom();
+    }
+
+    // Simulated AI reply
+    function botReply(userMessage) {
+      const msg = userMessage.toLowerCase();
+      let response = "";
+
+      if (msg.includes("schedule") || msg.includes("plan")) {
+        response = "Let’s create a study schedule! How many hours a day can you dedicate to studying?";
+      } else if (msg.includes("motivate") || msg.includes("motivation")) {
+        response = "Remember, consistency beats perfection! 📚 Keep moving forward, one step at a time.";
+      } else if (msg.includes("break") || msg.includes("focus")) {
+        response = "Try the Pomodoro technique — study for 25 minutes, then take a 5-minute break. It helps maintain focus!";
+      } else if (msg.includes("exam") || msg.includes("test")) {
+        response = "Before exams, focus on revision and past papers. I can help you make a quick review plan if you’d like!";
+      } else if (msg.includes("thank")) {
+        response = "You’re most welcome! 😊 I’m always here to support your study goals.";
+      } else {
+        const randomReplies = [
+          "That's a great question! Could you tell me more?",
+          "I’d love to help — are you struggling with time, motivation, or study methods?",
+          "Let’s work on improving your productivity together!",
+          "Good thinking! Let’s make your study time more effective."
+        ];
+        response = randomReplies[Math.floor(Math.random() * randomReplies.length)];
+      }
+
+      setTimeout(() => addMessage(response, "bot-msg"), 800);
+    }
+
+    // Send message
+    function sendMessage() {
+      const text = userInput.value.trim();
+      if (text === "") return;
+      addMessage(text, "user-msg");
+      userInput.value = "";
+      botReply(text);
+    }
+
+    // Button click
+    sendBtn.addEventListener("click", sendMessage);
+
+    // Enter key
+    userInput.addEventListener("keypress", (e) => {
+      if (e.key === "Enter") sendMessage();
+    });
+  </script>
+</body>
+</html>
